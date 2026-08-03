@@ -415,6 +415,7 @@
   .footer .serif{ font-size:16px; margin-bottom:6px; }
   .footer p{ font-size:12.5px; color:var(--ink-soft); line-height:1.8; margin:0 0 26px; }
   .footer .gift-block{ text-align:left; margin:6px 0 30px; }
+  .music-credit{ font-size:9.5px; color:var(--ink-faint); margin:22px 0 0; line-height:1.6; }
   .share-row{ display:flex; gap:10px; justify-content:center; }
   .share-btn{
     flex:1; max-width:150px; display:flex; align-items:center; justify-content:center; gap:6px;
@@ -513,6 +514,7 @@
     <div class="bars"><span></span><span></span><span></span></div>
   </button>
   <div class="bgm-caption" id="bgmCaption">BGM off</div>
+  <audio id="bgmAudio" src="assets/bgm.mp3" loop preload="none"></audio>
 
   <div id="app">
 
@@ -653,6 +655,8 @@
         <button class="share-btn kakao">카카오톡 공유</button>
         <button class="share-btn" id="copyLink">링크 복사</button>
       </div>
+
+      <p class="music-credit">Music: "Gymnopedie No. 1" (Erik Satie, arr. Kevin MacLeod, incompetech.com) — CC BY 4.0</p>
     </section>
 
   </div>
@@ -708,15 +712,17 @@
   // TODO: 배포 후 Google Apps Script 웹앱 URL을 연결하면 방명록/참석여부가 구글 시트에 저장됩니다.
   const SHEET_ENDPOINT = '';
 
-  // BGM toggle (visual state only — swap in a real <audio src="..."> when the file is ready)
+  // BGM toggle
   const bgmBtn = document.getElementById('bgmToggle');
   const bgmCaption = document.getElementById('bgmCaption');
+  const bgmAudio = document.getElementById('bgmAudio');
   let playing = false;
   bgmBtn.addEventListener('click', () => {
     playing = !playing;
     bgmBtn.dataset.playing = playing;
     bgmBtn.setAttribute('aria-pressed', playing);
     bgmCaption.textContent = playing ? 'BGM on' : 'BGM off';
+    if(playing){ bgmAudio.play().catch(()=>{}); } else { bgmAudio.pause(); }
   });
 
   // Calendar
@@ -891,17 +897,22 @@
     dotsWrap.appendChild(dot);
   });
   const dots = Array.from(dotsWrap.children);
+  const gPrevBtn = document.getElementById('gPrev');
+  const gNextBtn = document.getElementById('gNext');
   function syncDots(){
     const idx = Math.round(carousel.scrollLeft / carousel.clientWidth);
     dots.forEach((d, i) => d.setAttribute('aria-current', i === idx));
+    gPrevBtn.style.display = idx <= 0 ? 'none' : 'flex';
+    gNextBtn.style.display = idx >= slides.length - 1 ? 'none' : 'flex';
   }
   carousel.addEventListener('scroll', () => { window.requestAnimationFrame(syncDots); });
-  document.getElementById('gPrev').addEventListener('click', () => {
+  gPrevBtn.addEventListener('click', () => {
     carousel.scrollBy({ left: -carousel.clientWidth, behavior: 'smooth' });
   });
-  document.getElementById('gNext').addEventListener('click', () => {
+  gNextBtn.addEventListener('click', () => {
     carousel.scrollBy({ left: carousel.clientWidth, behavior: 'smooth' });
   });
+  syncDots();
 </script>
 </body>
 </html>

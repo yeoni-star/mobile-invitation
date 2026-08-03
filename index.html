@@ -253,12 +253,15 @@
     background:var(--sage-deep); color:#fff; font-weight:600;
     position:relative;
   }
-  .dday{
-    margin-top:18px; text-align:center;
-    border-top:1px dashed var(--line); padding-top:16px;
+  .dday-badge{
+    font-size:12.5px; font-weight:600; color:var(--sage-deep);
+    background:var(--sage-pale); border:1px solid var(--line);
+    padding:5px 12px; border-radius:20px; white-space:nowrap;
+    align-self:flex-start;
   }
-  .dday .num{ font-size:30px; color:var(--sage-deep); font-weight:600; }
-  .dday .cap{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+  .day-title-row{
+    display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+  }
 
   /* ---- Gallery (swipe carousel) ---- */
   .ph{
@@ -527,19 +530,31 @@
       </div>
     </section>
 
-    <!-- Calendar / D-day -->
-    <section class="snap-center">
+    <!-- Wedding Day: calendar + location -->
+    <section>
       <div class="eyebrow">Wedding Day</div>
-      <h2 class="section-title serif">가장 빛나는 하루</h2>
+      <div class="day-title-row">
+        <h2 class="section-title serif">가장 빛나는 하루</h2>
+        <span class="dday-badge" id="ddayBadge">D-96</span>
+      </div>
       <p class="section-sub">2026년 11월 7일 토요일 오후 2시 30분</p>
       <div class="calendar">
         <div class="cal-head">2026. 11</div>
         <div class="cal-grid" id="calGrid"></div>
-        <div class="dday">
-          <div class="num" id="ddayNum">D-96</div>
-          <div class="cap">결혼식까지 남은 날</div>
-        </div>
       </div>
+
+      <div class="eyebrow" style="margin-top:28px;">오시는 길</div>
+      <div class="map-ph"></div>
+      <div class="venue-name serif">AW호텔웨딩 오스카홀</div>
+      <div class="venue-addr">대구광역시 달서구 성서로 413</div>
+      <div class="tabs" role="tablist">
+        <div class="tab" role="tab" aria-selected="true" data-tab="subway">지하철</div>
+        <div class="tab" role="tab" aria-selected="false" data-tab="bus">버스</div>
+        <div class="tab" role="tab" aria-selected="false" data-tab="car">자가용</div>
+      </div>
+      <div class="tab-panel" data-panel="subway" data-active="true">○○역 ○번 출구에서 도보 5분 거리 안내 문구가 들어갈 자리입니다.</div>
+      <div class="tab-panel" data-panel="bus">간선/지선 버스 번호와 정류장 안내가 들어갈 자리입니다.</div>
+      <div class="tab-panel" data-panel="car">내비게이션 검색용 예식장명과 주차 안내가 들어갈 자리입니다.</div>
     </section>
 
     <!-- Gallery -->
@@ -560,23 +575,6 @@
         <button type="button" class="gnav-btn next" id="gNext" aria-label="다음 사진">&rsaquo;</button>
       </div>
       <div class="gallery-dots" id="galleryDots"></div>
-    </section>
-
-    <!-- Location -->
-    <section>
-      <div class="eyebrow">Location</div>
-      <h2 class="section-title serif">오시는 길</h2>
-      <div class="map-ph"></div>
-      <div class="venue-name serif">AW호텔웨딩 오스카홀</div>
-      <div class="venue-addr">대구광역시 달서구 성서로 413</div>
-      <div class="tabs" role="tablist">
-        <div class="tab" role="tab" aria-selected="true" data-tab="subway">지하철</div>
-        <div class="tab" role="tab" aria-selected="false" data-tab="bus">버스</div>
-        <div class="tab" role="tab" aria-selected="false" data-tab="car">자가용</div>
-      </div>
-      <div class="tab-panel" data-panel="subway" data-active="true">○○역 ○번 출구에서 도보 5분 거리 안내 문구가 들어갈 자리입니다.</div>
-      <div class="tab-panel" data-panel="bus">간선/지선 버스 번호와 정류장 안내가 들어갈 자리입니다.</div>
-      <div class="tab-panel" data-panel="car">내비게이션 검색용 예식장명과 주차 안내가 들어갈 자리입니다.</div>
     </section>
 
     <!-- Accounts -->
@@ -733,7 +731,7 @@
   const wedding = new Date(2026,10,7);
   const today = new Date(); today.setHours(0,0,0,0);
   const diff = Math.round((wedding - today) / 86400000);
-  document.getElementById('ddayNum').textContent = diff >= 0 ? `D-${diff}` : `D+${Math.abs(diff)}`;
+  document.getElementById('ddayBadge').textContent = diff >= 0 ? `D-${diff}` : `D+${Math.abs(diff)}`;
 
   // Location tabs
   document.querySelectorAll('.tab').forEach(tab => {

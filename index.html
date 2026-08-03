@@ -401,6 +401,7 @@
   .footer{ text-align:center; }
   .footer .serif{ font-size:16px; margin-bottom:6px; }
   .footer p{ font-size:12.5px; color:var(--ink-soft); line-height:1.8; margin:0 0 26px; }
+  .footer .gift-block{ text-align:left; margin:6px 0 30px; }
   .share-row{ display:flex; gap:10px; justify-content:center; }
   .share-btn{
     flex:1; max-width:150px; display:flex; align-items:center; justify-content:center; gap:6px;
@@ -577,36 +578,6 @@
       <div class="gallery-dots" id="galleryDots"></div>
     </section>
 
-    <!-- Accounts -->
-    <section>
-      <div class="eyebrow">Gift</div>
-      <h2 class="section-title serif">마음 전하실 곳</h2>
-      <p class="section-sub">참석이 어려우신 분들을 위해 안내드립니다</p>
-
-      <div class="acc-card" data-open="false">
-        <div class="acc-head">
-          <span>신랑측</span>
-          <span class="chev">⌄</span>
-        </div>
-        <div class="acc-body">
-          <div class="acc-row"><span>신랑 진규석</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-          <div class="acc-row"><span>[아버님 성함]</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-          <div class="acc-row"><span>[어머님 성함]</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-        </div>
-      </div>
-      <div class="acc-card" data-open="false">
-        <div class="acc-head">
-          <span>신부측</span>
-          <span class="chev">⌄</span>
-        </div>
-        <div class="acc-body">
-          <div class="acc-row"><span>신부 배시연</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-          <div class="acc-row"><span>[아버님 성함]</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-          <div class="acc-row"><span>[어머님 성함]</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-        </div>
-      </div>
-    </section>
-
     <!-- Guestbook -->
     <section>
       <div class="eyebrow">Guestbook</div>
@@ -633,9 +604,39 @@
     </section>
 
     <!-- Footer -->
-    <section class="footer snap-center">
+    <section class="footer">
       <div class="serif">감사합니다</div>
       <p>바쁘신 걸음 내어주셔서<br>진심으로 감사드립니다.</p>
+
+      <div class="gift-block">
+        <div class="eyebrow">Gift</div>
+        <h2 class="section-title serif">마음 전하실 곳</h2>
+        <p class="section-sub">참석이 어려우신 분들을 위해 안내드립니다</p>
+
+        <div class="acc-card" data-open="false">
+          <div class="acc-head">
+            <span>신랑측</span>
+            <span class="chev">⌄</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-row"><span>신랑 진규석</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row"><span>[아버님 성함]</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row"><span>[어머님 성함]</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+          </div>
+        </div>
+        <div class="acc-card" data-open="false">
+          <div class="acc-head">
+            <span>신부측</span>
+            <span class="chev">⌄</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-row"><span>신부 배시연</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row"><span>[아버님 성함]</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row"><span>[어머님 성함]</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+          </div>
+        </div>
+      </div>
+
       <div class="share-row">
         <button class="share-btn kakao">카카오톡 공유</button>
         <button class="share-btn" id="copyLink">링크 복사</button>

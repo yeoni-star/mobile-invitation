@@ -328,7 +328,7 @@
 
   /* ---- Location ---- */
   .map-ph{
-    height:220px; border-radius:16px; margin-bottom:16px;
+    height:130px; border-radius:16px; margin-bottom:16px;
     background:
       linear-gradient(var(--line) 1px, transparent 1px) 0 0/28px 28px,
       linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0/28px 28px,
@@ -360,7 +360,7 @@
   .tab-panel{ font-size:13px; line-height:1.8; color:var(--ink-soft); display:none; }
   .tab-panel[data-active="true"]{ display:block; }
   .tab-panel b{ color:var(--ink); font-weight:600; }
-  .parking-img{ width:100%; border-radius:12px; border:1px solid var(--line); display:block; }
+  .parking-img{ max-height:180px; width:auto; max-width:100%; border-radius:12px; border:1px solid var(--line); display:block; margin:12px auto 0; }
   .parking-caption{ font-size:11.5px; color:var(--ink-faint); margin:8px 0 0; line-height:1.6; }
 
   /* ---- Gift / accounts ---- */
@@ -572,12 +572,17 @@
       <div class="venue-name serif">AW호텔웨딩 6층 오스카홀</div>
       <div class="venue-addr">대구광역시 달서구 성서로 413</div>
       <div class="tabs" role="tablist">
-        <div class="tab" role="tab" aria-selected="true" data-tab="subway">지하철</div>
+        <div class="tab" role="tab" aria-selected="true" data-tab="car">자가용</div>
+        <div class="tab" role="tab" aria-selected="false" data-tab="subway">지하철</div>
         <div class="tab" role="tab" aria-selected="false" data-tab="bus">버스</div>
-        <div class="tab" role="tab" aria-selected="false" data-tab="car">자가용</div>
-        <div class="tab" role="tab" aria-selected="false" data-tab="parking">주차</div>
       </div>
-      <div class="tab-panel" data-panel="subway" data-active="true">
+      <div class="tab-panel" data-panel="car" data-active="true">
+        <b>서대구 IC</b> (경부·중앙·구마)<br>
+        서대구 IC에서 광주·마산 방면 1km 직진 → 대구·성주 방면 우측 출구로 나오신 후 성주·성서 방면으로 내리시면 됩니다.
+        <img src="assets/parking.png" alt="주차 안내도" class="parking-img">
+        <p class="parking-caption">쇼핑월드 상가 주차장은 유료이며 주차확인 필수입니다. (2시간 무료)</p>
+      </div>
+      <div class="tab-panel" data-panel="subway">
         2호선 성서산업단지역 8번 출구 도보 3분<br>
         동대구역(1호선) 대곡방면 → 반월당역(2호선) 문양방면 환승 → 성서산업단지역 하차
       </div>
@@ -585,14 +590,6 @@
         <b>성서우방타운 건너</b> · 405, 503, 527, 564, 달서3, 달서5, 급행5<br>
         <b>성서우체국 건너</b> · 564, 504<br>
         <b>성서산업단지역(1번출구)</b> · 250, 425, 518, 655, 504, 달서1, 성서1-1, 성서2
-      </div>
-      <div class="tab-panel" data-panel="car">
-        <b>서대구 IC</b> (경부·중앙·구마)<br>
-        서대구 IC에서 광주·마산 방면 1km 직진 → 대구·성주 방면 우측 출구로 나오신 후 성주·성서 방면으로 내리시면 됩니다.
-      </div>
-      <div class="tab-panel" data-panel="parking">
-        <img src="assets/parking.png" alt="주차 안내도" class="parking-img">
-        <p class="parking-caption">쇼핑월드 상가 주차장은 유료이며 주차확인 필수입니다. (2시간 무료)</p>
       </div>
     </section>
 
@@ -653,8 +650,8 @@
           </div>
           <div class="acc-body">
             <div class="acc-row"><span>신랑 진규석</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-            <div class="acc-row"><span>진병섭</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-            <div class="acc-row"><span>김춘옥</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row"><span>부 진병섭</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row"><span>모 김춘옥</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
           </div>
         </div>
         <div class="acc-card" data-open="false">
@@ -664,8 +661,8 @@
           </div>
           <div class="acc-body">
             <div class="acc-row"><span>신부 배시연</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-            <div class="acc-row"><span>배상진</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-            <div class="acc-row"><span>권령경</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row"><span>부 배상진</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row"><span>모 권령경</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
           </div>
         </div>
       </div>

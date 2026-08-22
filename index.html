@@ -358,6 +358,8 @@
   .tab-panel{ font-size:13px; line-height:1.8; color:var(--ink-soft); display:none; }
   .tab-panel[data-active="true"]{ display:block; }
   .tab-panel b{ color:var(--ink); font-weight:600; }
+  .parking-img{ width:100%; border-radius:12px; border:1px solid var(--line); display:block; }
+  .parking-caption{ font-size:11.5px; color:var(--ink-faint); margin:8px 0 0; line-height:1.6; }
 
   /* ---- Gift / accounts ---- */
   .acc-card{
@@ -495,7 +497,6 @@
     display:block; width:100%; text-align:center; background:none; border:none;
     color:var(--ink-faint); font-size:12.5px; padding:14px 0 0; cursor:pointer; text-decoration:underline; text-underline-offset:3px;
   }
-  .rsvp-note{ font-size:10.5px; color:var(--ink-faint); line-height:1.7; margin-top:14px; text-align:center; }
 
   .rsvp-chip{
     position:fixed; right:max(16px, env(safe-area-inset-right)); bottom:max(16px, env(safe-area-inset-bottom));
@@ -574,6 +575,7 @@
         <div class="tab" role="tab" aria-selected="true" data-tab="subway">지하철</div>
         <div class="tab" role="tab" aria-selected="false" data-tab="bus">버스</div>
         <div class="tab" role="tab" aria-selected="false" data-tab="car">자가용</div>
+        <div class="tab" role="tab" aria-selected="false" data-tab="parking">주차</div>
       </div>
       <div class="tab-panel" data-panel="subway" data-active="true">
         2호선 성서산업단지역 8번 출구 도보 3분<br>
@@ -587,6 +589,10 @@
       <div class="tab-panel" data-panel="car">
         <b>서대구 IC</b> (경부·중앙·구마)<br>
         서대구 IC에서 광주·마산 방면 1km 직진 → 대구·성주 방면 우측 출구로 나오신 후 성주·성서 방면으로 내리시면 됩니다.
+      </div>
+      <div class="tab-panel" data-panel="parking">
+        <img src="assets/parking.png" alt="주차 안내도" class="parking-img">
+        <p class="parking-caption">쇼핑월드 상가 주차장은 유료이며 주차확인 필수입니다. (2시간 무료)</p>
       </div>
     </section>
 
@@ -705,15 +711,14 @@
         <div class="rsvp-field">
           <span class="rsvp-label">식사 여부</span>
           <div class="pill-group" id="rsvpMeal">
-            <button type="button" class="pill-btn" data-val="yes" aria-pressed="false">식사 함께</button>
-            <button type="button" class="pill-btn" data-val="no" aria-pressed="false">식사 안함</button>
+            <button type="button" class="pill-btn" data-val="yes" aria-pressed="false">O</button>
+            <button type="button" class="pill-btn" data-val="no" aria-pressed="false">식X</button>
           </div>
         </div>
       </div>
 
       <button type="button" class="rsvp-submit" id="rsvpSubmit" disabled>전달하기</button>
       <button type="button" class="rsvp-later" id="rsvpLater">아직 잘 모르겠어요 · 나중에 남길게요</button>
-      <p class="rsvp-note">실제 배포 시 이 응답은 Google Sheets에 자동으로 기록됩니다.</p>
     </div>
   </div>
 

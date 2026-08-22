@@ -257,7 +257,13 @@
   .mini-cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; text-align:center; }
   .mini-cal-grid .dow{ font-size:10px; color:var(--ink-faint); padding-bottom:4px; }
   .mini-cal-grid .day{ font-size:12.5px; color:var(--ink-soft); padding:6px 0; border-radius:8px; }
-  .mini-cal-grid .day.wedding{ background:var(--sage-deep); color:#fff; font-weight:600; }
+  .mini-cal-grid .day.wedding{
+    background:var(--sage-deep); color:#fff; font-weight:600;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
+    padding:4px 0;
+  }
+  .mini-cal-grid .day-num{ font-size:12.5px; line-height:1.1; }
+  .mini-cal-grid .day-time{ font-size:7.5px; font-weight:400; opacity:.9; line-height:1; }
 
   /* ---- Gallery (swipe carousel) ---- */
   .ph{
@@ -416,7 +422,7 @@
   .footer .serif{ font-size:16px; margin-bottom:6px; }
   .footer p{ font-size:12.5px; color:var(--ink-soft); line-height:1.8; margin:0 0 26px; }
   .footer .gift-block{ text-align:left; margin:6px 0 30px; }
-  .music-credit{ font-size:9.5px; color:var(--ink-faint); margin:22px 0 0; line-height:1.6; }
+  .music-credit{ font-size:8px; color:var(--ink-faint); margin:28px 0 0; line-height:1.5; opacity:.75; }
   .share-row{ display:flex; gap:10px; justify-content:center; }
   .share-btn{
     flex:1; max-width:150px; display:flex; align-items:center; justify-content:center; gap:6px;
@@ -508,6 +514,7 @@
   .rsvp-chip .dot{ width:7px;height:7px;border-radius:50%; background:var(--gold); flex:none; }
 </style>
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7eeaecd2532613530cfc76309c4f158a&libraries=services"></script>
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"></script>
 </head>
 <body>
 
@@ -526,7 +533,7 @@
       <div class="cover-content">
         <div class="cover-eyebrow">Wedding Invitation</div>
         <div class="cover-names serif">진규석<span class="amp">&amp;</span>배시연</div>
-        <div class="cover-date" style="margin-top:14px;">2026. 11. 07. SAT · 오후 2:00 (AW호텔웨딩 오스카홀)</div>
+        <div class="cover-date" style="margin-top:14px;">2026. 11. 07. SAT · 오후 2:00<br>(AW호텔웨딩 오스카홀)</div>
       </div>
       <div class="scroll-cue">SCROLL ↓</div>
     </section>
@@ -548,7 +555,7 @@
 
       <div class="mini-cal">
         <div class="mini-cal-head">
-          <span class="serif">2026년 11월 7일 토요일 오후 2시</span>
+          <span class="serif">26년 11월</span>
           <span class="dday-badge" id="ddayBadge">D-96</span>
         </div>
         <div class="mini-cal-grid" id="miniCalGrid"></div>
@@ -667,11 +674,11 @@
       <p>바쁘신 걸음 내어주셔서<br>진심으로 감사드립니다.</p>
 
       <div class="share-row">
-        <button class="share-btn kakao">카카오톡 공유</button>
+        <button class="share-btn kakao" id="kakaoShare">카카오톡 공유</button>
         <button class="share-btn" id="copyLink">링크 복사</button>
       </div>
 
-      <p class="music-credit">Music: "Gymnopedie No. 1" (Erik Satie, arr. Kevin MacLeod, incompetech.com) — CC BY 4.0</p>
+      <p class="music-credit">BGM: Gymnopedie No.1 - Kevin MacLeod (incompetech.com), CC BY 4.0</p>
     </section>
 
   </div>
@@ -751,8 +758,13 @@
   const weekStartDay = wedding.getDate() - wedding.getDay();
   for(let d = weekStartDay; d < weekStartDay + 14; d++){
     const el = document.createElement('div');
-    el.className = 'day' + (d === wedding.getDate() ? ' wedding' : '');
-    el.textContent = d;
+    const isWedding = d === wedding.getDate();
+    el.className = 'day' + (isWedding ? ' wedding' : '');
+    if(isWedding){
+      el.innerHTML = '<span class="day-num">' + d + '</span><span class="day-time">오후 2시</span>';
+    } else {
+      el.textContent = d;
+    }
     miniCalGrid.appendChild(el);
   }
 
@@ -817,6 +829,30 @@
   document.getElementById('copyLink').addEventListener('click', () => {
     navigator.clipboard?.writeText(location.href).catch(()=>{});
     showToast('링크가 복사되었습니다');
+  });
+
+  // Kakao share
+  if(window.Kakao && !Kakao.isInitialized()){
+    Kakao.init('7eeaecd2532613530cfc76309c4f158a');
+  }
+  document.getElementById('kakaoShare').addEventListener('click', () => {
+    if(!window.Kakao || !Kakao.isInitialized()){
+      showToast('카카오톡 공유를 불러오지 못했어요');
+      return;
+    }
+    Kakao.Share.sendDefault({
+      objectType: 'feed',
+      content: {
+        title: '진규석 ♥ 배시연 결혼합니다',
+        description: '2026. 11. 07 (토) 오후 2시\nAW호텔웨딩 오스카홀',
+        imageUrl: new URL('assets/cover.jpg', location.href).href,
+        link: { mobileWebUrl: location.href, webUrl: location.href }
+      },
+      buttons: [{
+        title: '청첩장 보기',
+        link: { mobileWebUrl: location.href, webUrl: location.href }
+      }]
+    });
   });
 
   // Guestbook

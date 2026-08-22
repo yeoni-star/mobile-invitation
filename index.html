@@ -382,7 +382,7 @@
   .copy-btn:active{ transform:scale(.96); }
 
   /* ---- Guestbook ---- */
-  .gb-form{ display:flex; flex-direction:column; gap:7px; margin-bottom:14px; }
+  .gb-form{ display:flex; flex-direction:column; gap:7px; margin-bottom:22px; }
   .gb-form input, .gb-form textarea{
     font-family:inherit; font-size:13.5px; padding:9px 12px;
     border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink);
@@ -394,7 +394,6 @@
     background:var(--sage-deep); color:#fff; border:none; border-radius:10px;
     font-size:13px; padding:8px 16px; cursor:pointer;
   }
-  .gb-note{ font-size:10.5px; color:var(--ink-faint); margin:-2px 0 12px; line-height:1.55; }
   .gb-list{
     display:flex; flex-direction:column; gap:8px;
     max-height:180px; overflow-y:auto; padding-right:4px; margin-right:-4px;
@@ -603,7 +602,6 @@
         <textarea id="gbMsg" placeholder="따뜻한 축하 메시지를 남겨주세요"></textarea>
         <button id="gbSubmit">남기기</button>
       </div>
-      <div class="gb-note">※ 여기 남기신 메시지는 Google Sheets에 자동으로 저장됩니다.</div>
 
       <div class="gb-list" id="gbList">
         <div class="gb-item">

@@ -240,28 +240,24 @@
   }
   .section-sub{ font-size:13px; color:var(--ink-soft); margin:0 0 26px; }
 
-  .calendar{
-    background:var(--card); border:1px solid var(--line); border-radius:18px;
-    padding:20px; box-shadow:var(--shadow);
-  }
-  .cal-head{ text-align:center; font-size:13px; letter-spacing:.1em; color:var(--sage-deep); margin-bottom:14px; }
-  .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; text-align:center; }
-  .cal-grid .dow{ font-size:10px; color:var(--ink-faint); padding-bottom:6px; }
-  .cal-grid .day{ font-size:12.5px; color:var(--ink-soft); padding:6px 0; border-radius:8px; }
-  .cal-grid .day.blank{ visibility:hidden; }
-  .cal-grid .day.wedding{
-    background:var(--sage-deep); color:#fff; font-weight:600;
-    position:relative;
-  }
   .dday-badge{
-    font-size:12.5px; font-weight:600; color:var(--sage-deep);
+    font-size:12px; font-weight:600; color:var(--sage-deep);
     background:var(--sage-pale); border:1px solid var(--line);
-    padding:5px 12px; border-radius:20px; white-space:nowrap;
-    align-self:flex-start;
+    padding:4px 11px; border-radius:20px; white-space:nowrap;
   }
-  .day-title-row{
-    display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+  .mini-cal{
+    margin-top:26px;
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:16px 18px; box-shadow:var(--shadow);
   }
+  .mini-cal-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    margin-bottom:12px; font-size:13px; color:var(--ink);
+  }
+  .mini-cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; text-align:center; }
+  .mini-cal-grid .dow{ font-size:10px; color:var(--ink-faint); padding-bottom:4px; }
+  .mini-cal-grid .day{ font-size:12.5px; color:var(--ink-soft); padding:6px 0; border-radius:8px; }
+  .mini-cal-grid .day.wedding{ background:var(--sage-deep); color:#fff; font-weight:600; }
 
   /* ---- Gallery (swipe carousel) ---- */
   .ph{
@@ -530,7 +526,7 @@
       <div class="cover-content">
         <div class="cover-eyebrow">Wedding Invitation</div>
         <div class="cover-names serif">진규석<span class="amp">&amp;</span>배시연</div>
-        <div class="cover-date" style="margin-top:14px;">2026. 11. 07. SAT · 오후 2:00</div>
+        <div class="cover-date" style="margin-top:14px;">2026. 11. 07. SAT · 오후 2:00 (AW호텔웨딩 오스카홀)</div>
       </div>
       <div class="scroll-cue">SCROLL ↓</div>
     </section>
@@ -549,22 +545,19 @@
         <div class="row"><span class="who">진병섭 · 김춘옥의 아들 <b>진규석</b></span></div>
         <div class="row"><span class="who">배상진 · 권령경의 딸 <b>배시연</b></span></div>
       </div>
+
+      <div class="mini-cal">
+        <div class="mini-cal-head">
+          <span class="serif">2026년 11월 7일 토요일 오후 2시</span>
+          <span class="dday-badge" id="ddayBadge">D-96</span>
+        </div>
+        <div class="mini-cal-grid" id="miniCalGrid"></div>
+      </div>
     </section>
 
-    <!-- Wedding Day: calendar + location -->
+    <!-- Location -->
     <section>
-      <div class="eyebrow">Wedding Day</div>
-      <div class="day-title-row">
-        <h2 class="section-title serif">가장 빛나는 하루</h2>
-        <span class="dday-badge" id="ddayBadge">D-96</span>
-      </div>
-      <p class="section-sub">2026년 11월 7일 토요일 오후 2시</p>
-      <div class="calendar">
-        <div class="cal-head">2026. 11</div>
-        <div class="cal-grid" id="calGrid"></div>
-      </div>
-
-      <div class="eyebrow" style="margin-top:28px;">오시는 길</div>
+      <div class="eyebrow">오시는 길</div>
       <div class="map-ph">
         <div id="kakaoMap"></div>
         <span class="map-hint">탭하여 길찾기</span>
@@ -746,29 +739,24 @@
     if(playing){ bgmAudio.play().catch(()=>{}); } else { bgmAudio.pause(); }
   });
 
-  // Calendar
-  const calGrid = document.getElementById('calGrid');
+  // Mini calendar (2 weeks around the wedding day)
+  const wedding = new Date(2026,10,7);
+  const miniCalGrid = document.getElementById('miniCalGrid');
   const dows = ['일','월','화','수','목','금','토'];
   dows.forEach(d => {
     const el = document.createElement('div');
     el.className = 'dow'; el.textContent = d;
-    calGrid.appendChild(el);
+    miniCalGrid.appendChild(el);
   });
-  const firstDow = new Date(2026,10,1).getDay();
-  for(let i=0;i<firstDow;i++){
+  const weekStartDay = wedding.getDate() - wedding.getDay();
+  for(let d = weekStartDay; d < weekStartDay + 14; d++){
     const el = document.createElement('div');
-    el.className = 'day blank';
-    calGrid.appendChild(el);
-  }
-  for(let d=1; d<=30; d++){
-    const el = document.createElement('div');
-    el.className = 'day' + (d===7 ? ' wedding' : '');
+    el.className = 'day' + (d === wedding.getDate() ? ' wedding' : '');
     el.textContent = d;
-    calGrid.appendChild(el);
+    miniCalGrid.appendChild(el);
   }
 
   // D-day (live)
-  const wedding = new Date(2026,10,7);
   const today = new Date(); today.setHours(0,0,0,0);
   const diff = Math.round((wedding - today) / 86400000);
   document.getElementById('ddayBadge').textContent = diff >= 0 ? `D-${diff}` : `D+${Math.abs(diff)}`;

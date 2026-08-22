@@ -645,26 +645,26 @@
         <h2 class="section-title serif">마음 전하실 곳</h2>
         <p class="section-sub">참석이 어려우신 분들을 위해 안내드립니다</p>
 
-        <div class="acc-card" data-open="false">
+        <div class="acc-card" data-open="false" data-side="groom">
           <div class="acc-head">
             <span>신랑측</span>
             <span class="chev">⌄</span>
           </div>
           <div class="acc-body">
-            <div class="acc-row"><span>신랑 진규석</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-            <div class="acc-row"><span>부 진병섭</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-            <div class="acc-row"><span>모 김춘옥</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row" data-role="self"><span class="acc-name">신랑 진규석</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row" data-role="father"><span class="acc-name">부 진병섭</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row" data-role="mother"><span class="acc-name">모 김춘옥</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
           </div>
         </div>
-        <div class="acc-card" data-open="false">
+        <div class="acc-card" data-open="false" data-side="bride">
           <div class="acc-head">
             <span>신부측</span>
             <span class="chev">⌄</span>
           </div>
           <div class="acc-body">
-            <div class="acc-row"><span>신부 배시연</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-            <div class="acc-row"><span>부 배상진</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-            <div class="acc-row"><span>모 권령경</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row" data-role="self"><span class="acc-name">신부 배시연</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row" data-role="father"><span class="acc-name">부 배상진</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row" data-role="mother"><span class="acc-name">모 권령경</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
           </div>
         </div>
       </div>
@@ -881,6 +881,26 @@
     } catch(err){ /* keep whatever is already rendered */ }
   }
   loadGuestbook();
+
+  // Load account numbers from Google Sheets
+  async function loadAccounts(){
+    if(!SHEET_ENDPOINT) return;
+    try{
+      const res = await fetch(`${SHEET_ENDPOINT}?action=accounts`);
+      const json = await res.json();
+      if(!json.ok || !Array.isArray(json.data)) return;
+      json.data.forEach(row => {
+        const card = document.querySelector(`.acc-card[data-side="${row.side}"]`);
+        if(!card) return;
+        const rowEl = card.querySelector(`.acc-row[data-role="${row.role}"]`);
+        if(!rowEl) return;
+        const label = { self: row.side === 'groom' ? '신랑' : '신부', father: '부', mother: '모' }[row.role];
+        rowEl.querySelector('.acc-name').textContent = `${label} ${row.name}`;
+        rowEl.querySelector('.copy-btn').dataset.copy = row.account;
+      });
+    } catch(err){ /* keep placeholder values */ }
+  }
+  loadAccounts();
 
   document.getElementById('gbSubmit').addEventListener('click', () => {
     const name = document.getElementById('gbName').value.trim();

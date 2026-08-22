@@ -251,8 +251,12 @@
     padding:16px 18px; box-shadow:var(--shadow);
   }
   .mini-cal-head{
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    position:relative;
+    text-align:center;
     margin-bottom:12px; font-size:13px; color:var(--ink);
+  }
+  .mini-cal-head .dday-badge{
+    position:absolute; right:0; top:50%; transform:translateY(-50%);
   }
   .mini-cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; text-align:center; }
   .mini-cal-grid .dow{ font-size:10px; color:var(--ink-faint); padding-bottom:4px; }
@@ -360,8 +364,7 @@
   .tab-panel{ font-size:13px; line-height:1.8; color:var(--ink-soft); display:none; }
   .tab-panel[data-active="true"]{ display:block; }
   .tab-panel b{ color:var(--ink); font-weight:600; }
-  .parking-img{ max-height:180px; width:auto; max-width:100%; border-radius:12px; border:1px solid var(--line); display:block; margin:12px auto 0; }
-  .parking-caption{ font-size:11.5px; color:var(--ink-faint); margin:8px 0 0; line-height:1.6; }
+  .parking-img{ width:100%; border-radius:12px; border:1px solid var(--line); display:block; margin:12px 0 0; }
 
   /* ---- Gift / accounts ---- */
   .acc-card{
@@ -533,7 +536,7 @@
       <div class="cover-content">
         <div class="cover-eyebrow">Wedding Invitation</div>
         <div class="cover-names serif">진규석<span class="amp">&amp;</span>배시연</div>
-        <div class="cover-date" style="margin-top:14px;">2026. 11. 07. SAT · 오후 2:00</div>
+        <div class="cover-date" style="margin-top:14px;">2026. 11. 07. SAT · 오후 2:00<br>AW호텔웨딩 오스카홀</div>
       </div>
       <div class="scroll-cue">SCROLL ↓</div>
     </section>
@@ -580,7 +583,6 @@
         <b>서대구 IC</b> (경부·중앙·구마)<br>
         서대구 IC에서 광주·마산 방면 1km 직진 → 대구·성주 방면 우측 출구로 나오신 후 성주·성서 방면으로 내리시면 됩니다.
         <img src="assets/parking.png" alt="주차 안내도" class="parking-img">
-        <p class="parking-caption">쇼핑월드 상가 주차장은 유료이며 주차확인 필수입니다. (2시간 무료)</p>
       </div>
       <div class="tab-panel" data-panel="subway">
         2호선 성서산업단지역 8번 출구 도보 3분<br>

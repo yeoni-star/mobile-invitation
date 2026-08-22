@@ -712,7 +712,7 @@
           <span class="rsvp-label">식사 여부</span>
           <div class="pill-group" id="rsvpMeal">
             <button type="button" class="pill-btn" data-val="yes" aria-pressed="false">O</button>
-            <button type="button" class="pill-btn" data-val="no" aria-pressed="false">식X</button>
+            <button type="button" class="pill-btn" data-val="no" aria-pressed="false">X</button>
           </div>
         </div>
       </div>
@@ -882,9 +882,10 @@
   const rsvpSubmit = document.getElementById('rsvpSubmit');
   const rsvpCountEl = document.getElementById('rsvpCount');
 
+  const RSVP_STORAGE_KEY = 'rsvpSubmitted_jingyuseok_baesiyeon';
   let rsvpState = { attend: null, meal: null, count: 1 };
-  let rsvpAnswered = false;
-  let rsvpAutoShown = false;
+  let rsvpAnswered = !!localStorage.getItem(RSVP_STORAGE_KEY);
+  let rsvpAutoShown = rsvpAnswered;
 
   function openRsvp(){
     rsvpChip.classList.remove('show');
@@ -927,6 +928,7 @@
 
   rsvpSubmit.addEventListener('click', () => {
     rsvpAnswered = true;
+    localStorage.setItem(RSVP_STORAGE_KEY, '1');
     closeRsvp(false);
     rsvpChip.classList.remove('show');
     const summary = rsvpState.attend === 'yes'

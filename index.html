@@ -354,6 +354,7 @@
   }
   .tab-panel{ font-size:13px; line-height:1.8; color:var(--ink-soft); display:none; }
   .tab-panel[data-active="true"]{ display:block; }
+  .tab-panel b{ color:var(--ink); font-weight:600; }
 
   /* ---- Gift / accounts ---- */
   .acc-card{
@@ -567,9 +568,19 @@
         <div class="tab" role="tab" aria-selected="false" data-tab="bus">버스</div>
         <div class="tab" role="tab" aria-selected="false" data-tab="car">자가용</div>
       </div>
-      <div class="tab-panel" data-panel="subway" data-active="true">○○역 ○번 출구에서 도보 5분 거리 안내 문구가 들어갈 자리입니다.</div>
-      <div class="tab-panel" data-panel="bus">간선/지선 버스 번호와 정류장 안내가 들어갈 자리입니다.</div>
-      <div class="tab-panel" data-panel="car">내비게이션 검색용 예식장명과 주차 안내가 들어갈 자리입니다.</div>
+      <div class="tab-panel" data-panel="subway" data-active="true">
+        2호선 성서산업단지역 8번 출구 도보 3분<br>
+        동대구역(1호선) 대곡방면 → 반월당역(2호선) 문양방면 환승 → 성서산업단지역 하차
+      </div>
+      <div class="tab-panel" data-panel="bus">
+        <b>성서우방타운 건너</b> · 405, 503, 527, 564, 달서3, 달서5, 급행5<br>
+        <b>성서우체국 건너</b> · 564, 504<br>
+        <b>성서산업단지역(1번출구)</b> · 250, 425, 518, 655, 504, 달서1, 성서1-1, 성서2
+      </div>
+      <div class="tab-panel" data-panel="car">
+        <b>서대구 IC</b> (경부·중앙·구마)<br>
+        서대구 IC에서 광주·마산 방면 1km 직진 → 대구·성주 방면 우측 출구로 나오신 후 성주·성서 방면으로 내리시면 됩니다.
+      </div>
     </section>
 
     <!-- Gallery -->

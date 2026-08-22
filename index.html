@@ -326,19 +326,22 @@
 
   /* ---- Location ---- */
   .map-ph{
-    height:170px; border-radius:16px; margin-bottom:16px;
+    height:220px; border-radius:16px; margin-bottom:16px;
     background:
-      radial-gradient(circle at 50% 42%, transparent 0 6px, var(--sage-deep) 6px 8px, transparent 9px),
       linear-gradient(var(--line) 1px, transparent 1px) 0 0/28px 28px,
       linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0/28px 28px,
       var(--sage-pale);
     border:1px solid var(--line);
     position:relative;
+    overflow:hidden;
   }
-  .map-ph::after{
-    content:"venue pin";
-    position:absolute; top:calc(42% + 14px); left:50%; transform:translateX(-50%);
-    font-size:10px; color:var(--sage-deep); letter-spacing:.05em;
+  .map-ph #kakaoMap{ position:absolute; inset:0; }
+  .map-hint{
+    position:absolute; right:10px; bottom:10px; z-index:2;
+    font-size:10.5px; color:var(--sage-deep);
+    background:color-mix(in srgb, var(--card) 88%, transparent);
+    border:1px solid var(--line); border-radius:20px; padding:4px 10px;
+    pointer-events:none;
   }
   .venue-name{ font-size:18px; margin:0 0 4px; }
   .venue-addr{ font-size:13px; color:var(--ink-soft); margin:0 0 18px; }
@@ -507,6 +510,7 @@
   .rsvp-chip.show{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
   .rsvp-chip .dot{ width:7px;height:7px;border-radius:50%; background:var(--gold); flex:none; }
 </style>
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7eeaecd2532613530cfc76309c4f158a&libraries=services"></script>
 </head>
 <body>
 
@@ -560,7 +564,10 @@
       </div>
 
       <div class="eyebrow" style="margin-top:28px;">오시는 길</div>
-      <div class="map-ph"></div>
+      <div class="map-ph">
+        <div id="kakaoMap"></div>
+        <span class="map-hint">탭하여 길찾기</span>
+      </div>
       <div class="venue-name serif">AW호텔웨딩 6층 오스카홀</div>
       <div class="venue-addr">대구광역시 달서구 성서로 413</div>
       <div class="tabs" role="tablist">
@@ -760,6 +767,27 @@
   const today = new Date(); today.setHours(0,0,0,0);
   const diff = Math.round((wedding - today) / 86400000);
   document.getElementById('ddayBadge').textContent = diff >= 0 ? `D-${diff}` : `D+${Math.abs(diff)}`;
+
+  // Kakao Map
+  if(window.kakao && kakao.maps){
+    kakao.maps.load(() => {
+      const container = document.getElementById('kakaoMap');
+      const geocoder = new kakao.maps.services.Geocoder();
+      geocoder.addressSearch('대구광역시 달서구 성서로 413', (result, status) => {
+        if(status !== kakao.maps.services.Status.OK) return;
+        const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+        const map = new kakao.maps.Map(container, { center: coords, level: 4 });
+        new kakao.maps.Marker({ map, position: coords });
+        map.setZoomable(false);
+        map.setDraggable(false);
+        const wrap = container.closest('.map-ph');
+        wrap.style.cursor = 'pointer';
+        wrap.addEventListener('click', () => {
+          window.open(`https://map.kakao.com/link/map/AW호텔웨딩,${result[0].y},${result[0].x}`, '_blank');
+        });
+      });
+    });
+  }
 
   // Location tabs
   document.querySelectorAll('.tab').forEach(tab => {

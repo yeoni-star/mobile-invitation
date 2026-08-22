@@ -839,17 +839,18 @@
       showToast('카카오톡 공유를 불러오지 못했어요');
       return;
     }
+    const SITE_URL = 'https://mobile-invitation-vof8.vercel.app/';
     Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
         title: '진규석 ♥ 배시연 결혼합니다',
         description: '2026. 11. 07 (토) 오후 2시\nAW호텔웨딩 오스카홀',
-        imageUrl: new URL('assets/cover.jpg', location.href).href,
-        link: { mobileWebUrl: location.href, webUrl: location.href }
+        imageUrl: SITE_URL + 'assets/cover.jpg',
+        link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL }
       },
       buttons: [{
         title: '청첩장 보기',
-        link: { mobileWebUrl: location.href, webUrl: location.href }
+        link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL }
       }]
     });
   });

@@ -12,13 +12,13 @@ npx serve .
 
 ## 구성
 
-- 표지 → 인사말 → 캘린더/디데이 → 갤러리(스와이프) → 오시는 길 → 마음 전하실 곳 → 방명록 → 마무리
+- 표지 → 인사말 → 가장 빛나는 하루(캘린더/디데이 + 오시는 길) → 갤러리(스와이프) → 방명록 → 마무리(마음 전하실 곳 + 감사 인사)
 - 참석 여부 팝업 (스크롤 중 1회 자동 노출, 우측 하단 알약 버튼으로 재오픈 가능)
-- 우측 상단 BGM on/off 토글 (음원 파일 연결 전 상태)
+- 우측 상단 BGM on/off 토글 ("Gymnopedie No. 1", Kevin MacLeod, CC BY 4.0 — 하단에 출처 표기)
+- 방명록·참석여부는 Google Apps Script 웹앱을 통해 Google Sheets에 저장/조회됩니다 (`SHEET_ENDPOINT` 상수, 스프레드시트 "청첩장 응답 - 진규석 배시연")
 
 ## 남은 작업
 
-- `assets/cover.jpg` 외 갤러리용 실제 사진 교체
-- `[ ]`로 표시된 이름/주소/계좌번호 placeholder 채우기
-- 방명록·참석여부를 Google Sheets에 저장하려면 Google Apps Script 웹앱을 만들고 `index.html`의 `SHEET_ENDPOINT` 상수에 배포 URL을 넣으면 됩니다.
-- BGM mp3 파일을 추가하고 `#bgmToggle` 클릭 핸들러에 `<audio>` 재생 로직 연결
+- `assets/gallery/`에 사진 추가/교체 시 `index.html`의 `<img>` 목록만 늘리면 됩니다
+- `[ ]`로 표시된 부모님 성함(친가/외가 중 비어있는 항목)·계좌번호 placeholder 채우기
+- 오시는 길 지하철/버스/자가용 안내 문구 채우기

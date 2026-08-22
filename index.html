@@ -4,9 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>진규석 ♥ 배시연 결혼합니다 · 2026.11.07</title>
-<meta name="description" content="진규석 · 배시연의 결혼식에 초대합니다. 2026년 11월 7일 토요일 오후 2시 30분, AW호텔웨딩 오스카홀." />
+<meta name="description" content="진규석 · 배시연의 결혼식에 초대합니다. 2026년 11월 7일 토요일 오후 2시, AW호텔웨딩 6층 오스카홀." />
 <meta property="og:title" content="진규석 ♥ 배시연 결혼합니다" />
-<meta property="og:description" content="2026년 11월 7일 토요일 오후 2시 30분, AW호텔웨딩 오스카홀에서 함께해주세요." />
+<meta property="og:description" content="2026년 11월 7일 토요일 오후 2시, AW호텔웨딩 6층 오스카홀에서 함께해주세요." />
 <meta property="og:image" content="assets/cover.jpg" />
 <meta property="og:type" content="website" />
 <style>
@@ -525,7 +525,7 @@
       <div class="cover-content">
         <div class="cover-eyebrow">Wedding Invitation</div>
         <div class="cover-names serif">진규석<span class="amp">&amp;</span>배시연</div>
-        <div class="cover-date" style="margin-top:14px;">2026. 11. 07. SAT · 오후 2:30</div>
+        <div class="cover-date" style="margin-top:14px;">2026. 11. 07. SAT · 오후 2:00</div>
       </div>
       <div class="scroll-cue">SCROLL ↓</div>
     </section>
@@ -553,7 +553,7 @@
         <h2 class="section-title serif">가장 빛나는 하루</h2>
         <span class="dday-badge" id="ddayBadge">D-96</span>
       </div>
-      <p class="section-sub">2026년 11월 7일 토요일 오후 2시 30분</p>
+      <p class="section-sub">2026년 11월 7일 토요일 오후 2시</p>
       <div class="calendar">
         <div class="cal-head">2026. 11</div>
         <div class="cal-grid" id="calGrid"></div>
@@ -561,7 +561,7 @@
 
       <div class="eyebrow" style="margin-top:28px;">오시는 길</div>
       <div class="map-ph"></div>
-      <div class="venue-name serif">AW호텔웨딩 오스카홀</div>
+      <div class="venue-name serif">AW호텔웨딩 6층 오스카홀</div>
       <div class="venue-addr">대구광역시 달서구 성서로 413</div>
       <div class="tabs" role="tablist">
         <div class="tab" role="tab" aria-selected="true" data-tab="subway">지하철</div>
@@ -603,7 +603,7 @@
         <textarea id="gbMsg" placeholder="따뜻한 축하 메시지를 남겨주세요"></textarea>
         <button id="gbSubmit">남기기</button>
       </div>
-      <div class="gb-note">※ 실제 배포 시 이 목록은 Google Sheets와 연동되어, 여기 남긴 메시지가 시트에 자동 저장되고 다시 이 화면에 불러와집니다. (지금은 동작 확인용 임시 목록)</div>
+      <div class="gb-note">※ 여기 남기신 메시지는 Google Sheets에 자동으로 저장됩니다.</div>
 
       <div class="gb-list" id="gbList">
         <div class="gb-item">
@@ -709,8 +709,8 @@
   <div class="toast" id="toast"></div>
 
 <script>
-  // TODO: 배포 후 Google Apps Script 웹앱 URL을 연결하면 방명록/참석여부가 구글 시트에 저장됩니다.
-  const SHEET_ENDPOINT = '';
+  // Google Apps Script 웹앱 (방명록/참석여부를 구글시트에 기록)
+  const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwFvjySIe7wvyGPMa0o8MuaS1UylmSaBj5RGiaKIOzHh97r6VFgewXSW17rs6uaM3zh/exec';
 
   // BGM toggle
   const bgmBtn = document.getElementById('bgmToggle');
@@ -789,22 +789,48 @@
     showToast('링크가 복사되었습니다');
   });
 
-  // Guestbook (front-end demo only until SHEET_ENDPOINT is wired up)
+  // Guestbook
+  function formatGbDate(d){
+    const dt = d ? new Date(d) : new Date();
+    return `${String(dt.getMonth()+1).padStart(2,'0')}.${String(dt.getDate()).padStart(2,'0')}`;
+  }
+  function renderGbItem(name, msg, dateStr, prepend){
+    const item = document.createElement('div');
+    item.className = 'gb-item';
+    item.innerHTML = `<div class="who"><span></span><span>${dateStr}</span></div><div class="msg"></div>`;
+    item.querySelector('.who span').textContent = name;
+    item.querySelector('.msg').textContent = msg;
+    const list = document.getElementById('gbList');
+    prepend ? list.prepend(item) : list.appendChild(item);
+  }
+  async function loadGuestbook(){
+    if(!SHEET_ENDPOINT) return;
+    try{
+      const res = await fetch(`${SHEET_ENDPOINT}?action=guestbook`);
+      const json = await res.json();
+      if(!json.ok || !Array.isArray(json.data)) return;
+      const list = document.getElementById('gbList');
+      list.innerHTML = '';
+      json.data.forEach(row => renderGbItem(row.name, row.message, formatGbDate(row.timestamp), false));
+    } catch(err){ /* keep whatever is already rendered */ }
+  }
+  loadGuestbook();
+
   document.getElementById('gbSubmit').addEventListener('click', () => {
     const name = document.getElementById('gbName').value.trim();
     const msg = document.getElementById('gbMsg').value.trim();
     if(!name || !msg){ showToast('이름과 메시지를 입력해주세요'); return; }
-    const item = document.createElement('div');
-    item.className = 'gb-item';
-    const now = new Date();
-    const dateStr = `${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
-    item.innerHTML = `<div class="who"><span></span><span>${dateStr}</span></div><div class="msg"></div>`;
-    item.querySelector('.who span').textContent = name;
-    item.querySelector('.msg').textContent = msg;
-    document.getElementById('gbList').prepend(item);
+    renderGbItem(name, msg, formatGbDate(), true);
     document.getElementById('gbName').value = '';
     document.getElementById('gbMsg').value = '';
     showToast('메시지가 등록되었습니다');
+    if(SHEET_ENDPOINT){
+      fetch(SHEET_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ type: 'guestbook', name, message: msg })
+      }).catch(()=>{});
+    }
   });
 
   // ---- RSVP ----
@@ -865,6 +891,18 @@
       ? `참석 · ${rsvpState.count}명 · 식사 ${rsvpState.meal === 'yes' ? 'O' : 'X'}`
       : '불참으로 접수';
     showToast(`참석 정보가 전달되었습니다 (${summary})`);
+    if(SHEET_ENDPOINT){
+      fetch(SHEET_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          type: 'rsvp',
+          attend: rsvpState.attend === 'yes' ? '참석' : '불참',
+          count: rsvpState.attend === 'yes' ? rsvpState.count : '',
+          meal: rsvpState.attend === 'yes' ? (rsvpState.meal === 'yes' ? '함께' : '안함') : ''
+        })
+      }).catch(()=>{});
+    }
   });
   document.getElementById('rsvpClose').addEventListener('click', () => closeRsvp(true));
   document.getElementById('rsvpLater').addEventListener('click', () => closeRsvp(true));

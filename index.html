@@ -380,12 +380,15 @@
     max-height:0; overflow:hidden; transition:max-height .3s ease;
     padding:0 18px;
   }
-  .acc-card[data-open="true"] .acc-body{ max-height:200px; padding-bottom:16px; }
+  .acc-card[data-open="true"] .acc-body{ max-height:280px; padding-bottom:16px; }
   .acc-row{
-    display:flex; justify-content:space-between; align-items:center;
-    font-size:13px; color:var(--ink-soft); padding:8px 0; border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:10px 0; border-top:1px solid var(--line);
   }
   .acc-row:first-child{ border-top:none; }
+  .acc-info{ display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .acc-name{ font-size:13px; color:var(--ink); }
+  .acc-number{ font-size:11.5px; color:var(--ink-soft); }
   .copy-btn{
     font-size:11px; color:var(--sage-deep); border:1px solid var(--sage);
     background:transparent; border-radius:8px; padding:4px 9px; cursor:pointer;
@@ -645,26 +648,26 @@
         <h2 class="section-title serif">마음 전하실 곳</h2>
         <p class="section-sub">참석이 어려우신 분들을 위해 안내드립니다</p>
 
-        <div class="acc-card" data-open="false" data-side="groom">
+        <div class="acc-card" data-open="true" data-side="groom">
           <div class="acc-head">
             <span>신랑측</span>
             <span class="chev">⌄</span>
           </div>
           <div class="acc-body">
-            <div class="acc-row" data-role="self"><span class="acc-name">신랑 진규석</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-            <div class="acc-row" data-role="father"><span class="acc-name">부 진병섭</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-            <div class="acc-row" data-role="mother"><span class="acc-name">모 김춘옥</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row" data-role="self"><div class="acc-info"><span class="acc-name">신랑 진규석</span><span class="acc-number">000-0000-0000</span></div><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row" data-role="father"><div class="acc-info"><span class="acc-name">부 진병섭</span><span class="acc-number">000-0000-0000</span></div><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row" data-role="mother"><div class="acc-info"><span class="acc-name">모 김춘옥</span><span class="acc-number">000-0000-0000</span></div><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
           </div>
         </div>
-        <div class="acc-card" data-open="false" data-side="bride">
+        <div class="acc-card" data-open="true" data-side="bride">
           <div class="acc-head">
             <span>신부측</span>
             <span class="chev">⌄</span>
           </div>
           <div class="acc-body">
-            <div class="acc-row" data-role="self"><span class="acc-name">신부 배시연</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-            <div class="acc-row" data-role="father"><span class="acc-name">부 배상진</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
-            <div class="acc-row" data-role="mother"><span class="acc-name">모 권령경</span><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row" data-role="self"><div class="acc-info"><span class="acc-name">신부 배시연</span><span class="acc-number">000-0000-0000</span></div><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row" data-role="father"><div class="acc-info"><span class="acc-name">부 배상진</span><span class="acc-number">000-0000-0000</span></div><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
+            <div class="acc-row" data-role="mother"><div class="acc-info"><span class="acc-name">모 권령경</span><span class="acc-number">000-0000-0000</span></div><button class="copy-btn" data-copy="000-0000-0000">복사</button></div>
           </div>
         </div>
       </div>
@@ -896,6 +899,7 @@
         if(!rowEl) return;
         const label = { self: row.side === 'groom' ? '신랑' : '신부', father: '부', mother: '모' }[row.role];
         rowEl.querySelector('.acc-name').textContent = `${label} ${row.name}`;
+        rowEl.querySelector('.acc-number').textContent = row.account;
         rowEl.querySelector('.copy-btn').dataset.copy = row.account;
       });
     } catch(err){ /* keep placeholder values */ }

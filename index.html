@@ -746,7 +746,7 @@
     </div>
   </div>
 
-  <div class="rsvp-chip" id="rsvpChip" role="button" tabindex="0">
+  <div class="rsvp-chip show" id="rsvpChip" role="button" tabindex="0">
     <span class="dot"></span>
     참석 여부 남기기
   </div>
@@ -975,7 +975,7 @@
   }
   function closeRsvp(withChip){
     rsvpOverlay.classList.remove('show');
-    if(withChip && !rsvpAnswered) rsvpChip.classList.add('show');
+    if(withChip) rsvpChip.classList.add('show');
   }
   function refreshSubmit(){
     const ok = rsvpState.attend === 'no' || (rsvpState.attend === 'yes' && rsvpState.meal !== null);
@@ -1011,8 +1011,7 @@
   rsvpSubmit.addEventListener('click', () => {
     rsvpAnswered = true;
     localStorage.setItem(RSVP_STORAGE_KEY, '1');
-    closeRsvp(false);
-    rsvpChip.classList.remove('show');
+    closeRsvp(true);
     const summary = rsvpState.attend === 'yes'
       ? `참석 · ${rsvpState.count}명 · 식사 ${rsvpState.meal === 'yes' ? 'O' : 'X'}`
       : '불참으로 접수';

@@ -917,14 +917,17 @@
       }catch(e){}
     }
     try{
-      const res = await fetch(`${SHEET_ENDPOINT}?action=guestbook`);
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 12000);
+      const res = await fetch(`${SHEET_ENDPOINT}?action=guestbook`, { signal: ctrl.signal });
+      clearTimeout(timer);
       const json = await res.json();
       if(!json.ok || !Array.isArray(json.data)) throw new Error('bad response');
       renderGuestbook(json.data);
       try{ localStorage.setItem(GB_CACHE_KEY, JSON.stringify(json.data)); }catch(e){}
     } catch(err){
-      if(attempt < 3){
-        setTimeout(() => loadGuestbook(attempt + 1), 1500 * attempt);
+      if(attempt < 5){
+        setTimeout(() => loadGuestbook(attempt + 1), 800);
       } else if(document.getElementById('gbStatus')){
         document.getElementById('gbStatus').textContent = '방명록을 불러오지 못했어요. 새로고침 해주세요.';
       }
@@ -933,23 +936,39 @@
   loadGuestbook();
 
   // Load account numbers from Google Sheets
-  async function loadAccounts(){
+  const ACC_CACHE_KEY = 'accountsCache_jingyuseok_baesiyeon';
+  function renderAccounts(rows){
+    rows.forEach(row => {
+      const card = document.querySelector(`.acc-card[data-side="${row.side}"]`);
+      if(!card) return;
+      const rowEl = card.querySelector(`.acc-row[data-role="${row.role}"]`);
+      if(!rowEl) return;
+      const label = { self: row.side === 'groom' ? '신랑' : '신부', father: '부', mother: '모' }[row.role];
+      rowEl.querySelector('.acc-name').textContent = `${label} ${row.name}`;
+      rowEl.querySelector('.acc-number').textContent = row.account;
+      rowEl.querySelector('.copy-btn').dataset.copy = row.account;
+    });
+  }
+  async function loadAccounts(attempt = 1){
     if(!SHEET_ENDPOINT) return;
+    if(attempt === 1){
+      try{
+        const cached = JSON.parse(localStorage.getItem(ACC_CACHE_KEY) || 'null');
+        if(Array.isArray(cached)) renderAccounts(cached);
+      }catch(e){}
+    }
     try{
-      const res = await fetch(`${SHEET_ENDPOINT}?action=accounts`);
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 12000);
+      const res = await fetch(`${SHEET_ENDPOINT}?action=accounts`, { signal: ctrl.signal });
+      clearTimeout(timer);
       const json = await res.json();
-      if(!json.ok || !Array.isArray(json.data)) return;
-      json.data.forEach(row => {
-        const card = document.querySelector(`.acc-card[data-side="${row.side}"]`);
-        if(!card) return;
-        const rowEl = card.querySelector(`.acc-row[data-role="${row.role}"]`);
-        if(!rowEl) return;
-        const label = { self: row.side === 'groom' ? '신랑' : '신부', father: '부', mother: '모' }[row.role];
-        rowEl.querySelector('.acc-name').textContent = `${label} ${row.name}`;
-        rowEl.querySelector('.acc-number').textContent = row.account;
-        rowEl.querySelector('.copy-btn').dataset.copy = row.account;
-      });
-    } catch(err){ /* keep placeholder values */ }
+      if(!json.ok || !Array.isArray(json.data)) throw new Error('bad response');
+      renderAccounts(json.data);
+      try{ localStorage.setItem(ACC_CACHE_KEY, JSON.stringify(json.data)); }catch(e){}
+    } catch(err){
+      if(attempt < 5) setTimeout(() => loadAccounts(attempt + 1), 800);
+    }
   }
   loadAccounts();
 

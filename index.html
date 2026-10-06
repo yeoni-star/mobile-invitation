@@ -561,9 +561,8 @@
     transition:opacity .3s ease, transform .3s ease;
   }
   .rsvp-chip.show{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
-  .upload-chip{ bottom:calc(max(16px, env(safe-area-inset-bottom)) + 48px); }
+  .upload-chip{ bottom:auto; right:auto; top:max(16px, env(safe-area-inset-top)); left:max(16px, env(safe-area-inset-left)); }
   .rsvp-overlay.show ~ .upload-chip.show{ opacity:0; pointer-events:none; }
-  .rsvp-chip.upload-chip.on-cover{ opacity:0; transform:translateY(10px) scale(.95); pointer-events:none; }
   .rsvp-card .photo-progress{ margin-top:10px; }
   .rsvp-chip .dot{ width:7px;height:7px;border-radius:50%; background:var(--gold); flex:none; }
 </style>
@@ -1229,10 +1228,6 @@
     const uploadEnabled = Date.now() >= new Date('2026-11-07T00:00:00+09:00').getTime()
       || new URLSearchParams(location.search).get('upload') === '1';
     if(uploadEnabled) uploadChip.classList.add('show');
-    const appEl = document.getElementById('app');
-    const syncUploadChip = () => uploadChip.classList.toggle('on-cover', appEl.scrollTop < appEl.clientHeight * 0.5);
-    appEl.addEventListener('scroll', syncUploadChip, { passive: true });
-    syncUploadChip();
     const openUpload = () => { uploadChip.classList.remove('show'); uploadOverlay.classList.add('show'); };
     const closeUpload = () => { uploadOverlay.classList.remove('show'); if(uploadEnabled) uploadChip.classList.add('show'); };
     uploadChip.addEventListener('click', openUpload);

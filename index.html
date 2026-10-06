@@ -445,7 +445,7 @@
   }
   .gb-item .who{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--sage-deep); margin-bottom:5px; }
   .gb-item .msg{ font-size:13.5px; color:var(--ink); line-height:1.6; }
-  .gb-sample-tag{ font-size:10px; color:var(--ink-faint); }
+  .gb-status{ font-size:12.5px; color:var(--ink-faint); text-align:center; padding:14px 0; }
 
   /* ---- Footer ---- */
   .footer{ text-align:center; padding-top:36px; }
@@ -653,14 +653,7 @@
       </div>
 
       <div class="gb-list" id="gbList">
-        <div class="gb-item">
-          <div class="who"><span>하객 A <span class="gb-sample-tag">· 예시</span></span><span>08.03</span></div>
-          <div class="msg">두 사람의 시작을 진심으로 축하해요. 오래오래 지금처럼 예쁘게 지내길!</div>
-        </div>
-        <div class="gb-item">
-          <div class="who"><span>하객 B <span class="gb-sample-tag">· 예시</span></span><span>08.02</span></div>
-          <div class="msg">결혼 축하드립니다 :) 그날 꼭 뵙겠습니다!</div>
-        </div>
+        <div class="gb-status" id="gbStatus">방명록을 불러오는 중이에요…</div>
       </div>
     </section>
 
@@ -902,19 +895,39 @@
     item.querySelector('.who span').textContent = name;
     item.querySelector('.msg').textContent = msg;
     const list = document.getElementById('gbList');
+    list.querySelector('.gb-status')?.remove();
     prepend ? list.prepend(item) : list.appendChild(item);
+  }
+  const GB_CACHE_KEY = 'guestbookCache_jingyuseok_baesiyeon';
+  function renderGuestbook(rows){
+    const list = document.getElementById('gbList');
+    list.innerHTML = '';
+    if(!rows.length){
+      list.innerHTML = '<div class="gb-status">첫 번째 축하 메시지를 남겨주세요 :)</div>';
+      return;
+    }
+    rows.forEach(row => renderGbItem(row.name, row.message, formatGbDate(row.timestamp), false));
   }
   async function loadGuestbook(attempt = 1){
     if(!SHEET_ENDPOINT) return;
+    if(attempt === 1){
+      try{
+        const cached = JSON.parse(localStorage.getItem(GB_CACHE_KEY) || 'null');
+        if(Array.isArray(cached)) renderGuestbook(cached);
+      }catch(e){}
+    }
     try{
-      const res = await fetch(`${SHEET_ENDPOINT}?action=guestbook&_=${Date.now()}`, { cache: 'no-store' });
+      const res = await fetch(`${SHEET_ENDPOINT}?action=guestbook`);
       const json = await res.json();
       if(!json.ok || !Array.isArray(json.data)) throw new Error('bad response');
-      const list = document.getElementById('gbList');
-      list.innerHTML = '';
-      json.data.forEach(row => renderGbItem(row.name, row.message, formatGbDate(row.timestamp), false));
+      renderGuestbook(json.data);
+      try{ localStorage.setItem(GB_CACHE_KEY, JSON.stringify(json.data)); }catch(e){}
     } catch(err){
-      if(attempt < 3) setTimeout(() => loadGuestbook(attempt + 1), 1500 * attempt);
+      if(attempt < 3){
+        setTimeout(() => loadGuestbook(attempt + 1), 1500 * attempt);
+      } else if(document.getElementById('gbStatus')){
+        document.getElementById('gbStatus').textContent = '방명록을 불러오지 못했어요. 새로고침 해주세요.';
+      }
     }
   }
   loadGuestbook();

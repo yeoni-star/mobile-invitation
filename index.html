@@ -898,6 +898,21 @@
     list.querySelector('.gb-status')?.remove();
     prepend ? list.prepend(item) : list.appendChild(item);
   }
+  // Vercel 캐시 프록시(/api/sheet)를 먼저 쓰고, 실패하면 Apps Script를 직접 호출
+  async function fetchSheetData(action){
+    const tryFetch = async (url, ms) => {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), ms);
+      try{
+        const res = await fetch(url, { signal: ctrl.signal });
+        const json = await res.json();
+        if(json && json.ok && Array.isArray(json.data)) return json;
+      } finally { clearTimeout(timer); }
+      throw new Error('bad response');
+    };
+    try{ return await tryFetch(`/api/sheet?action=${action}`, 12000); }
+    catch(e){ return await tryFetch(`${SHEET_ENDPOINT}?action=${action}`, 12000); }
+  }
   const GB_CACHE_KEY = 'guestbookCache_jingyuseok_baesiyeon';
   function renderGuestbook(rows){
     const list = document.getElementById('gbList');
@@ -917,12 +932,7 @@
       }catch(e){}
     }
     try{
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 12000);
-      const res = await fetch(`${SHEET_ENDPOINT}?action=guestbook`, { signal: ctrl.signal });
-      clearTimeout(timer);
-      const json = await res.json();
-      if(!json.ok || !Array.isArray(json.data)) throw new Error('bad response');
+      const json = await fetchSheetData('guestbook');
       renderGuestbook(json.data);
       try{ localStorage.setItem(GB_CACHE_KEY, JSON.stringify(json.data)); }catch(e){}
     } catch(err){
@@ -958,12 +968,7 @@
       }catch(e){}
     }
     try{
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 12000);
-      const res = await fetch(`${SHEET_ENDPOINT}?action=accounts`, { signal: ctrl.signal });
-      clearTimeout(timer);
-      const json = await res.json();
-      if(!json.ok || !Array.isArray(json.data)) throw new Error('bad response');
+      const json = await fetchSheetData('accounts');
       renderAccounts(json.data);
       try{ localStorage.setItem(ACC_CACHE_KEY, JSON.stringify(json.data)); }catch(e){}
     } catch(err){
@@ -977,6 +982,11 @@
     const msg = document.getElementById('gbMsg').value.trim();
     if(!name || !msg){ showToast('이름과 메시지를 입력해주세요'); return; }
     renderGbItem(name, msg, formatGbDate(), true);
+    try{
+      const cached = JSON.parse(localStorage.getItem(GB_CACHE_KEY) || '[]');
+      cached.unshift({ timestamp: new Date().toISOString(), name, message: msg });
+      localStorage.setItem(GB_CACHE_KEY, JSON.stringify(cached));
+    }catch(e){}
     document.getElementById('gbName').value = '';
     document.getElementById('gbMsg').value = '';
     showToast('메시지가 등록되었습니다');

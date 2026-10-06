@@ -565,6 +565,9 @@
   .upload-chip{ bottom:calc(max(16px, env(safe-area-inset-bottom)) + 48px); }
   .rsvp-overlay.show ~ .upload-chip.show{ opacity:0; pointer-events:none; }
   .rsvp-card .photo-progress{ margin-top:10px; }
+  @keyframes chipBlink{ 0%,100%{ opacity:1; } 50%{ opacity:.15; } }
+  .upload-chip.blink{ animation:chipBlink .8s ease-in-out 1.8s 4; }
+  @media (prefers-reduced-motion: reduce){ .upload-chip.blink{ animation:none; } }
   .rsvp-chip .dot{ width:7px;height:7px;border-radius:50%; background:var(--gold); flex:none; }
 </style>
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=7eeaecd2532613530cfc76309c4f158a&autoload=false"></script>
@@ -1228,7 +1231,7 @@
     const uploadOverlay = document.getElementById('uploadOverlay');
     const uploadEnabled = Date.now() >= new Date('2026-11-07T00:00:00+09:00').getTime()
       || new URLSearchParams(location.search).get('upload') === '1';
-    if(uploadEnabled) uploadChip.classList.add('show');
+    if(uploadEnabled) uploadChip.classList.add('show', 'blink');
     const openUpload = () => { uploadChip.classList.remove('show'); uploadOverlay.classList.add('show'); };
     const closeUpload = () => { uploadOverlay.classList.remove('show'); if(uploadEnabled) uploadChip.classList.add('show'); };
     uploadChip.addEventListener('click', openUpload);

@@ -565,8 +565,8 @@
   .upload-chip{ bottom:calc(max(16px, env(safe-area-inset-bottom)) + 48px); }
   .rsvp-overlay.show ~ .upload-chip.show{ opacity:0; pointer-events:none; }
   .rsvp-card .photo-progress{ margin-top:10px; }
-  @keyframes chipBlink{ 0%,100%{ opacity:1; } 50%{ opacity:.15; } }
-  .upload-chip.blink{ animation:chipBlink .8s ease-in-out 1.8s 4; }
+  @keyframes chipBlink{ 0%,100%{ opacity:1; } 50%{ opacity:.45; } }
+  .upload-chip.blink{ animation:chipBlink 1.8s ease-in-out 1.8s 4; }
   @media (prefers-reduced-motion: reduce){ .upload-chip.blink{ animation:none; } }
   .rsvp-chip .dot{ width:7px;height:7px;border-radius:50%; background:var(--gold); flex:none; }
 </style>

@@ -2,6 +2,7 @@
 // 코드를 바꾼 뒤에는 반드시: 배포 > 배포 관리 > 수정(연필) > 버전: 새 버전 > 배포
 
 var PHOTO_FOLDER_NAME = "결혼식 하객 사진";
+var ALLOWED_ORIGINS = ["https://invitationsiyeon96.vercel.app"];
 var DRIVE_UPLOAD_PREFIX = "https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&upload_id=";
 
 function jsonOut(obj) {
@@ -86,17 +87,21 @@ function videoExtension(body) {
 
 function handleVideoStart(body) {
   var size = parseInt(body.size, 10);
-  if (!size || size > 110 * 1024 * 1024) {
+  if (!size || size > 310 * 1024 * 1024) {
     return jsonOut({ ok: false, error: "invalid size" });
+  }
+  var startHeaders = {
+    Authorization: "Bearer " + ScriptApp.getOAuthToken(),
+    "X-Upload-Content-Type": body.mime || "video/mp4",
+    "X-Upload-Content-Length": String(size)
+  };
+  if (ALLOWED_ORIGINS.indexOf(body.origin) >= 0) {
+    startHeaders["Origin"] = body.origin;
   }
   var res = UrlFetchApp.fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable", {
     method: "post",
     contentType: "application/json; charset=UTF-8",
-    headers: {
-      Authorization: "Bearer " + ScriptApp.getOAuthToken(),
-      "X-Upload-Content-Type": body.mime || "video/mp4",
-      "X-Upload-Content-Length": String(size)
-    },
+    headers: startHeaders,
     payload: JSON.stringify({
       name: uploadFileName(body, videoExtension(body)),
       parents: [getPhotoFolder().getId()]

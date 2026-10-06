@@ -542,7 +542,7 @@
   .rsvp-chip.show{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
   .rsvp-chip .dot{ width:7px;height:7px;border-radius:50%; background:var(--gold); flex:none; }
 </style>
-<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7eeaecd2532613530cfc76309c4f158a&libraries=services"></script>
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=7eeaecd2532613530cfc76309c4f158a&autoload=false"></script>
 </head>
 <body>
 
@@ -804,25 +804,22 @@
   document.getElementById('ddayBadge').textContent = diff >= 0 ? `D-${diff}` : `D+${Math.abs(diff)}`;
 
   // Kakao Map
-  if(window.kakao && kakao.maps){
-    kakao.maps.load(() => {
-      const container = document.getElementById('kakaoMap');
-      const geocoder = new kakao.maps.services.Geocoder();
-      geocoder.addressSearch('대구광역시 달서구 성서로 413', (result, status) => {
-        if(status !== kakao.maps.services.Status.OK) return;
-        const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-        const map = new kakao.maps.Map(container, { center: coords, level: 4 });
+  const VENUE_LAT = 35.8544438447905, VENUE_LNG = 128.506704235981;
+  const venueMapLink = `https://map.kakao.com/link/map/AW호텔웨딩,${VENUE_LAT},${VENUE_LNG}`;
+  const mapWrap = document.querySelector('.map-ph');
+  mapWrap.style.cursor = 'pointer';
+  mapWrap.addEventListener('click', () => window.open(venueMapLink, '_blank'));
+  try{
+    if(window.kakao && kakao.maps){
+      kakao.maps.load(() => {
+        const coords = new kakao.maps.LatLng(VENUE_LAT, VENUE_LNG);
+        const map = new kakao.maps.Map(document.getElementById('kakaoMap'), { center: coords, level: 4 });
         new kakao.maps.Marker({ map, position: coords });
         map.setZoomable(false);
         map.setDraggable(false);
-        const wrap = container.closest('.map-ph');
-        wrap.style.cursor = 'pointer';
-        wrap.addEventListener('click', () => {
-          window.open(`https://map.kakao.com/link/map/AW호텔웨딩,${result[0].y},${result[0].x}`, '_blank');
-        });
       });
-    });
-  }
+    }
+  }catch(err){ /* 지도 로드 실패 시에도 탭하면 카카오맵으로 이동 */ }
 
   // Location tabs
   document.querySelectorAll('.tab').forEach(tab => {

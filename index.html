@@ -195,7 +195,7 @@
 
   .cover-content{
     position:relative; z-index:10;
-    padding:32px 28px calc(40px + env(safe-area-inset-bottom));
+    padding:32px 28px calc(116px + env(safe-area-inset-bottom));
     color:#fff;
     text-shadow:0 2px 18px rgba(0,0,0,.35);
   }
@@ -561,7 +561,7 @@
     transition:opacity .3s ease, transform .3s ease;
   }
   .rsvp-chip.show{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
-  .upload-chip{ bottom:auto; right:auto; top:max(16px, env(safe-area-inset-top)); left:max(16px, env(safe-area-inset-left)); }
+  .upload-chip{ bottom:calc(max(16px, env(safe-area-inset-bottom)) + 48px); }
   .rsvp-overlay.show ~ .upload-chip.show{ opacity:0; pointer-events:none; }
   .rsvp-card .photo-progress{ margin-top:10px; }
   .rsvp-chip .dot{ width:7px;height:7px;border-radius:50%; background:var(--gold); flex:none; }

@@ -904,16 +904,18 @@
     const list = document.getElementById('gbList');
     prepend ? list.prepend(item) : list.appendChild(item);
   }
-  async function loadGuestbook(){
+  async function loadGuestbook(attempt = 1){
     if(!SHEET_ENDPOINT) return;
     try{
-      const res = await fetch(`${SHEET_ENDPOINT}?action=guestbook`);
+      const res = await fetch(`${SHEET_ENDPOINT}?action=guestbook&_=${Date.now()}`, { cache: 'no-store' });
       const json = await res.json();
-      if(!json.ok || !Array.isArray(json.data)) return;
+      if(!json.ok || !Array.isArray(json.data)) throw new Error('bad response');
       const list = document.getElementById('gbList');
       list.innerHTML = '';
       json.data.forEach(row => renderGbItem(row.name, row.message, formatGbDate(row.timestamp), false));
-    } catch(err){ /* keep whatever is already rendered */ }
+    } catch(err){
+      if(attempt < 3) setTimeout(() => loadGuestbook(attempt + 1), 1500 * attempt);
+    }
   }
   loadGuestbook();
 

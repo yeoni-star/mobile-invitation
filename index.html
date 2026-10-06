@@ -560,6 +560,9 @@
     transition:opacity .3s ease, transform .3s ease;
   }
   .rsvp-chip.show{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  .upload-chip{ bottom:calc(max(16px, env(safe-area-inset-bottom)) + 48px); }
+  .rsvp-overlay.show ~ .upload-chip.show{ opacity:0; pointer-events:none; }
+  .rsvp-card .photo-progress{ margin-top:10px; }
   .rsvp-chip .dot{ width:7px;height:7px;border-radius:50%; background:var(--gold); flex:none; }
 </style>
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=7eeaecd2532613530cfc76309c4f158a&autoload=false"></script>
@@ -688,15 +691,15 @@
         <div class="gb-status" id="gbStatus">방명록을 불러오는 중이에요…</div>
       </div>
 
-      <div class="photo-upload">
+      <div class="photo-upload" data-upload-root>
         <div class="photo-upload-title serif">오늘의 사진과 영상을 나눠주세요</div>
         <p class="photo-upload-sub">찍어주신 사진 · 영상을 신랑 · 신부에게 전해주세요 (최대 10개, 영상은 개당 300MB까지)</p>
         <div class="photo-upload-row">
-          <input type="text" id="photoName" placeholder="이름 (선택)" maxlength="20" />
-          <button type="button" id="photoPick">올리기</button>
+          <input type="text" class="js-photo-name" placeholder="이름 (선택)" maxlength="20" />
+          <button type="button" class="js-photo-pick">올리기</button>
         </div>
-        <input type="file" id="photoInput" accept="image/*,video/*" multiple hidden />
-        <div class="photo-progress" id="photoProgress" aria-live="polite"></div>
+        <input type="file" class="js-photo-input" accept="image/*,video/*" multiple hidden />
+        <div class="photo-progress js-photo-progress" aria-live="polite"></div>
       </div>
     </section>
 
@@ -783,9 +786,30 @@
     </div>
   </div>
 
+  <div class="rsvp-overlay" id="uploadOverlay">
+    <div class="rsvp-card" data-upload-root>
+      <div class="rsvp-head">
+        <div class="rsvp-title serif">오늘의 사진과 영상을 나눠주세요</div>
+        <button class="rsvp-x" id="uploadClose" aria-label="닫기">&times;</button>
+      </div>
+      <p class="rsvp-sub">찍어주신 사진 · 영상을 신랑 · 신부에게 전해주세요<br>(최대 10개, 영상은 개당 300MB까지)</p>
+      <div class="photo-upload-row">
+        <input type="text" class="js-photo-name" placeholder="이름 (선택)" maxlength="20" />
+        <button type="button" class="js-photo-pick">올리기</button>
+      </div>
+      <input type="file" class="js-photo-input" accept="image/*,video/*" multiple hidden />
+      <div class="photo-progress js-photo-progress" aria-live="polite"></div>
+    </div>
+  </div>
+
   <div class="rsvp-chip show" id="rsvpChip" role="button" tabindex="0">
     <span class="dot"></span>
     참석 여부 남기기
+  </div>
+
+  <div class="rsvp-chip upload-chip" id="uploadChip" role="button" tabindex="0">
+    <span class="dot"></span>
+    사진 · 영상 올리기
   </div>
 
   <div class="toast" id="toast"></div>
@@ -1044,10 +1068,13 @@
 
   // ---- Guest photo/video upload (Google Drive via Apps Script) ----
   (() => {
-    const input = document.getElementById('photoInput');
-    const pickBtn = document.getElementById('photoPick');
-    const nameEl = document.getElementById('photoName');
-    const progress = document.getElementById('photoProgress');
+    const inputs = Array.from(document.querySelectorAll('.js-photo-input'));
+    const pickBtns = Array.from(document.querySelectorAll('.js-photo-pick'));
+    const progressEls = Array.from(document.querySelectorAll('.js-photo-progress'));
+    let nameEl = document.querySelector('.js-photo-name');
+    const progress = { set textContent(v){ progressEls.forEach(e => { e.textContent = v; }); } };
+    const pickBtn = { set disabled(v){ pickBtns.forEach(b => { b.disabled = v; }); } };
+    let busy = false;
     const MAX_FILES = 10, MAX_EDGE = 1600;
     const MAX_VIDEOS = 3, MAX_VIDEO_MB = 300, RELAY_MAX_MB = 100;
     const CHUNK = 2 * 1024 * 1024, DIRECT_CHUNK = 8 * 1024 * 1024;
@@ -1147,11 +1174,14 @@
       return false;
     }
 
-    pickBtn.addEventListener('click', () => input.click());
-    input.addEventListener('change', async () => {
+    pickBtns.forEach((btn, i) => btn.addEventListener('click', () => inputs[i].click()));
+    inputs.forEach(input => input.addEventListener('change', async () => {
       let files = Array.from(input.files || []);
       input.value = '';
       if(!files.length) return;
+      if(busy){ showToast('다른 업로드가 진행 중이에요'); return; }
+      nameEl = input.closest('[data-upload-root]').querySelector('.js-photo-name');
+      busy = true;
       if(files.length > MAX_FILES){
         showToast(`한 번에 최대 ${MAX_FILES}개까지 올릴 수 있어요`);
         files = files.slice(0, MAX_FILES);
@@ -1183,12 +1213,26 @@
           ok ? done++ : failed++;
         }catch(e){ failed++; }
       }
+      busy = false;
       pickBtn.disabled = false;
       progress.textContent = failed
         ? `${done}개 전달 완료, ${failed}개는 실패했어요. 잠시 후 다시 시도해 주세요.`
         : `${done}개가 전달되었어요. 감사합니다!`;
       if(done) showToast('사진·영상이 전달되었습니다');
-    });
+    }));
+
+    // 우측 하단 버튼 + 팝업 (결혼식 당일부터 표시, ?upload=1 로 미리보기)
+    const uploadChip = document.getElementById('uploadChip');
+    const uploadOverlay = document.getElementById('uploadOverlay');
+    const uploadEnabled = Date.now() >= new Date('2026-11-07T00:00:00+09:00').getTime()
+      || new URLSearchParams(location.search).get('upload') === '1';
+    if(uploadEnabled) uploadChip.classList.add('show');
+    const openUpload = () => { uploadChip.classList.remove('show'); uploadOverlay.classList.add('show'); };
+    const closeUpload = () => { uploadOverlay.classList.remove('show'); if(uploadEnabled) uploadChip.classList.add('show'); };
+    uploadChip.addEventListener('click', openUpload);
+    uploadChip.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openUpload(); } });
+    document.getElementById('uploadClose').addEventListener('click', closeUpload);
+    uploadOverlay.addEventListener('click', (e) => { if(e.target === uploadOverlay) closeUpload(); });
   })();
 
   // ---- RSVP ----

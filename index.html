@@ -1257,19 +1257,29 @@
     uploadOverlay.addEventListener('click', (e) => { if(e.target === uploadOverlay) closeUpload(); });
   })();
 
-  // 오시는 길 페이지에 들어오면 식사 안내 말풍선을 한 번만 잠깐 보여줌
+  // 오시는 길 페이지에 들어오면 식사 안내 말풍선을 한 번만 잠깐 보여줌 (팝업이 열려 있으면 닫힌 뒤에)
   (() => {
     const bubble = document.getElementById('mealBubble');
     const locSection = document.querySelector('.map-ph').closest('section');
+    const overlays = [document.getElementById('rsvpOverlay'), document.getElementById('uploadOverlay')];
     let shown = false;
-    const io = new IntersectionObserver((entries) => {
-      if(shown || !entries.some(e => e.isIntersecting)) return;
+    const anyOpen = () => overlays.some(o => o.classList.contains('show'));
+    const locVisible = () => {
+      const r = locSection.getBoundingClientRect();
+      return Math.min(r.bottom, innerHeight) - Math.max(r.top, 0) > innerHeight * 0.6;
+    };
+    const attempt = () => {
+      if(shown || anyOpen() || !locVisible()) return;
       shown = true;
-      io.disconnect();
       bubble.classList.add('show');
       setTimeout(() => bubble.classList.remove('show'), 5500);
+    };
+    const io = new IntersectionObserver((entries) => {
+      if(entries.some(en => en.isIntersecting)) setTimeout(attempt, 450);
     }, { root: document.getElementById('app'), threshold: 0.6 });
     io.observe(locSection);
+    const mo = new MutationObserver(() => setTimeout(attempt, 450));
+    overlays.forEach(o => mo.observe(o, { attributes: true, attributeFilter: ['class'] }));
   })();
 
   // ---- RSVP ----

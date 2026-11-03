@@ -222,6 +222,18 @@
   }
   @keyframes bob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(6px);} }
 
+  .cover-meal{
+    position:absolute; z-index:10; white-space:nowrap;
+    top:max(21px, calc(env(safe-area-inset-top) + 5px)); left:max(16px, env(safe-area-inset-left));
+    padding:5px 12px; border-radius:16px; font-size:11px; letter-spacing:.02em; color:#fff;
+    background:rgba(255,255,255,.2); border:1px solid rgba(255,255,255,.42);
+    backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+    text-shadow:0 1px 6px rgba(0,0,0,.3);
+    animation:coverMealFloat 2.8s ease-in-out infinite;
+  }
+  @keyframes coverMealFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-2px); } }
+  @media (prefers-reduced-motion: reduce){ .cover-meal{ animation:none; } }
+
   /* ---- Greeting ---- */
   .greeting p{
     font-size:15.5px; line-height:1.95; color:var(--ink);
@@ -591,6 +603,7 @@
         <div class="cover-names serif">진규석<span class="amp">&amp;</span>배시연</div>
         <div class="cover-date" style="margin-top:14px;">2026. 11. 07. SAT · 오후 2:00<br>AW호텔웨딩 오스카홀</div>
       </div>
+      <div class="cover-meal">🍚 13:30부터 식사 가능합니다</div>
       <div class="scroll-cue">SCROLL ↓</div>
     </section>
 

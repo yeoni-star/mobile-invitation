@@ -351,7 +351,21 @@
     pointer-events:none;
   }
   .venue-name{ font-size:18px; margin:0 0 4px; }
-  .venue-addr{ font-size:13px; color:var(--ink-soft); margin:0 0 18px; }
+  .venue-addr{ font-size:13px; color:var(--ink-soft); margin:0 0 4px; }
+  .venue-meal{ font-size:12px; color:var(--sage-deep); margin:0 0 18px; }
+  .meal-bubble{
+    position:fixed; z-index:58;
+    top:max(16px, env(safe-area-inset-top)); left:max(16px, env(safe-area-inset-left));
+    max-width:calc(100% - 84px);
+    background:var(--card); border:1px solid var(--gold); color:var(--sage-deep);
+    font-size:12.5px; padding:9px 14px; border-radius:18px; box-shadow:var(--shadow);
+    opacity:0; transform:translateY(-8px) scale(.9); pointer-events:none;
+    transition:opacity .3s ease, transform .45s cubic-bezier(.34,1.56,.64,1);
+  }
+  .meal-bubble.show{ opacity:1; transform:none; }
+  .meal-bubble .rice{ display:inline-block; margin-right:4px; animation:riceBounce 1s ease-in-out infinite; }
+  @keyframes riceBounce{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-3px); } }
+  @media (prefers-reduced-motion: reduce){ .meal-bubble .rice{ animation:none; } }
   .tabs{ display:flex; gap:6px; margin-bottom:14px; }
   .tab{
     flex:1; text-align:center; font-size:12.5px; padding:9px 0;
@@ -627,6 +641,7 @@
       </div>
       <div class="venue-name serif">AW호텔웨딩 6층 오스카홀</div>
       <div class="venue-addr">대구광역시 달서구 성서로 413</div>
+      <div class="venue-meal">13:30부터 식사 가능합니다</div>
       <div class="tabs" role="tablist">
         <div class="tab" role="tab" aria-selected="true" data-tab="car">자가용</div>
         <div class="tab" role="tab" aria-selected="false" data-tab="subway">지하철</div>
@@ -816,6 +831,8 @@
     <span class="dot"></span>
     사진 · 영상 올리기
   </div>
+
+  <div class="meal-bubble" id="mealBubble" role="status" aria-live="polite"><span class="rice">🍚</span>13:30부터 식사 가능합니다</div>
 
   <div class="toast" id="toast"></div>
 
@@ -1238,6 +1255,21 @@
     uploadChip.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openUpload(); } });
     document.getElementById('uploadClose').addEventListener('click', closeUpload);
     uploadOverlay.addEventListener('click', (e) => { if(e.target === uploadOverlay) closeUpload(); });
+  })();
+
+  // 오시는 길 페이지에 들어오면 식사 안내 말풍선을 한 번만 잠깐 보여줌
+  (() => {
+    const bubble = document.getElementById('mealBubble');
+    const locSection = document.querySelector('.map-ph').closest('section');
+    let shown = false;
+    const io = new IntersectionObserver((entries) => {
+      if(shown || !entries.some(e => e.isIntersecting)) return;
+      shown = true;
+      io.disconnect();
+      bubble.classList.add('show');
+      setTimeout(() => bubble.classList.remove('show'), 5500);
+    }, { root: document.getElementById('app'), threshold: 0.6 });
+    io.observe(locSection);
   })();
 
   // ---- RSVP ----

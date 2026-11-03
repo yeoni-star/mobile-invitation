@@ -353,17 +353,19 @@
   .venue-name{ font-size:18px; margin:0 0 4px; }
   .venue-addr{ font-size:13px; color:var(--ink-soft); margin:0 0 18px; }
   .meal-bubble{
-    position:absolute; right:28px; bottom:calc(112px + env(safe-area-inset-bottom));
+    position:absolute; left:calc(100% + 12px); bottom:0; white-space:nowrap; letter-spacing:0; font-weight:400;
     background:rgba(255,254,251,.92); border:1px solid var(--gold); color:var(--sage-deep);
     font-size:12px; line-height:1.45; text-align:center; padding:6px 12px; border-radius:14px;
     box-shadow:0 6px 18px -8px rgba(0,0,0,.35); text-shadow:none;
     animation:bubbleBounce 1.6s ease-in-out infinite;
   }
   .meal-bubble::before{
-    content:""; position:absolute; left:-5px; top:50%; width:8px; height:8px;
+    content:""; position:absolute; left:-5px; top:72%; width:8px; height:8px;
     background:rgba(255,254,251,.92); border-left:1px solid var(--gold); border-bottom:1px solid var(--gold);
     transform:translateY(-50%) rotate(45deg);
   }
+  .date-line{ position:relative; display:inline-block; }
+  @media (max-width:340px){ .meal-bubble{ font-size:10.5px; padding:5px 9px; left:calc(100% + 10px); } }
   @keyframes bubbleBounce{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-3px); } }
   @media (prefers-reduced-motion: reduce){ .meal-bubble{ animation:none; } }
   .tabs{ display:flex; gap:6px; margin-bottom:14px; }
@@ -603,8 +605,7 @@
       <div class="cover-content">
         <div class="cover-eyebrow">Wedding Invitation</div>
         <div class="cover-names serif">진규석<span class="amp">&amp;</span>배시연</div>
-        <div class="cover-date" style="margin-top:14px;">2026. 11. 07. SAT · 오후 2:00<br>AW호텔웨딩 오스카홀</div>
-        <div class="meal-bubble">🍚 13:30부터<br>식사 가능합니다</div>
+        <div class="cover-date" style="margin-top:14px;"><span class="date-line">2026. 11. 07. SAT · 오후 2:00<span class="meal-bubble">🍚 13:30부터<br>식사 가능합니다</span></span><br>AW호텔웨딩 오스카홀</div>
       </div>
       <div class="scroll-cue">SCROLL ↓</div>
     </section>

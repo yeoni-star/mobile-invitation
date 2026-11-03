@@ -351,21 +351,22 @@
     pointer-events:none;
   }
   .venue-name{ font-size:18px; margin:0 0 4px; }
-  .venue-addr{ font-size:13px; color:var(--ink-soft); margin:0 0 4px; }
-  .venue-meal{ font-size:12px; color:var(--sage-deep); margin:0 0 18px; }
+  .venue-addr{ font-size:13px; color:var(--ink-soft); margin:0 0 18px; }
+  .loc-head{ display:flex; align-items:center; flex-wrap:wrap; gap:6px 12px; margin-bottom:14px; }
+  .loc-head .eyebrow{ margin-bottom:0; }
   .meal-bubble{
-    position:fixed; z-index:58;
-    top:max(16px, env(safe-area-inset-top)); left:max(16px, env(safe-area-inset-left));
-    max-width:calc(100% - 84px);
+    position:relative; white-space:nowrap;
     background:var(--card); border:1px solid var(--gold); color:var(--sage-deep);
-    font-size:12.5px; padding:9px 14px; border-radius:18px; box-shadow:var(--shadow);
-    opacity:0; transform:translateY(-8px) scale(.9); pointer-events:none;
-    transition:opacity .3s ease, transform .45s cubic-bezier(.34,1.56,.64,1);
+    font-size:12px; padding:5px 12px; border-radius:14px; box-shadow:var(--shadow);
+    animation:bubbleBounce 1.6s ease-in-out infinite;
   }
-  .meal-bubble.show{ opacity:1; transform:none; }
-  .meal-bubble .rice{ display:inline-block; margin-right:4px; animation:riceBounce 1s ease-in-out infinite; }
-  @keyframes riceBounce{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-3px); } }
-  @media (prefers-reduced-motion: reduce){ .meal-bubble .rice{ animation:none; } }
+  .meal-bubble::before{
+    content:""; position:absolute; left:-5px; top:50%; width:8px; height:8px;
+    background:var(--card); border-left:1px solid var(--gold); border-bottom:1px solid var(--gold);
+    transform:translateY(-50%) rotate(45deg);
+  }
+  @keyframes bubbleBounce{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-3px); } }
+  @media (prefers-reduced-motion: reduce){ .meal-bubble{ animation:none; } }
   .tabs{ display:flex; gap:6px; margin-bottom:14px; }
   .tab{
     flex:1; text-align:center; font-size:12.5px; padding:9px 0;
@@ -634,14 +635,16 @@
 
     <!-- Location -->
     <section>
-      <div class="eyebrow">오시는 길</div>
+      <div class="loc-head">
+        <div class="eyebrow">오시는 길</div>
+        <div class="meal-bubble">🍚 13:30부터 식사 가능합니다</div>
+      </div>
       <div class="map-ph">
         <div id="kakaoMap"></div>
         <span class="map-hint">탭하여 길찾기</span>
       </div>
       <div class="venue-name serif">AW호텔웨딩 6층 오스카홀</div>
       <div class="venue-addr">대구광역시 달서구 성서로 413</div>
-      <div class="venue-meal">13:30부터 식사 가능합니다</div>
       <div class="tabs" role="tablist">
         <div class="tab" role="tab" aria-selected="true" data-tab="car">자가용</div>
         <div class="tab" role="tab" aria-selected="false" data-tab="subway">지하철</div>
@@ -831,8 +834,6 @@
     <span class="dot"></span>
     사진 · 영상 올리기
   </div>
-
-  <div class="meal-bubble" id="mealBubble" role="status" aria-live="polite"><span class="rice">🍚</span>13:30부터 식사 가능합니다</div>
 
   <div class="toast" id="toast"></div>
 
@@ -1255,31 +1256,6 @@
     uploadChip.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openUpload(); } });
     document.getElementById('uploadClose').addEventListener('click', closeUpload);
     uploadOverlay.addEventListener('click', (e) => { if(e.target === uploadOverlay) closeUpload(); });
-  })();
-
-  // 오시는 길 페이지에 들어오면 식사 안내 말풍선을 한 번만 잠깐 보여줌 (팝업이 열려 있으면 닫힌 뒤에)
-  (() => {
-    const bubble = document.getElementById('mealBubble');
-    const locSection = document.querySelector('.map-ph').closest('section');
-    const overlays = [document.getElementById('rsvpOverlay'), document.getElementById('uploadOverlay')];
-    let shown = false;
-    const anyOpen = () => overlays.some(o => o.classList.contains('show'));
-    const locVisible = () => {
-      const r = locSection.getBoundingClientRect();
-      return Math.min(r.bottom, innerHeight) - Math.max(r.top, 0) > innerHeight * 0.6;
-    };
-    const attempt = () => {
-      if(shown || anyOpen() || !locVisible()) return;
-      shown = true;
-      bubble.classList.add('show');
-      setTimeout(() => bubble.classList.remove('show'), 5500);
-    };
-    const io = new IntersectionObserver((entries) => {
-      if(entries.some(en => en.isIntersecting)) setTimeout(attempt, 450);
-    }, { root: document.getElementById('app'), threshold: 0.6 });
-    io.observe(locSection);
-    const mo = new MutationObserver(() => setTimeout(attempt, 450));
-    overlays.forEach(o => mo.observe(o, { attributes: true, attributeFilter: ['class'] }));
   })();
 
   // ---- RSVP ----
